@@ -1,17 +1,20 @@
-# -*- coding: utf-8 -*-
-# +
-import time
 import numpy as np
 import torch
 import logging
 import pytz
-import itertools
 import random
 import os
-import copy
 import yaml
 import shutil
 from datetime import datetime
+from ogb.nodeproppred import Evaluator
+from dgl import function as fn
+
+CPF_data = ['cora', 'citeseer', 'pubmed', 'a-computer', 'a-photo']
+OGB_data = ['ogbn-arxiv', 'ogbn-products']
+NonHom_data = ['pokec', 'penn94']
+BGNN_data = ['house_class', 'vk_class']
+
 
 def set_seed(seed):
     torch.manual_seed(seed)
@@ -21,6 +24,7 @@ def set_seed(seed):
     torch.backends.cudnn.deterministic = True
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+
 
 def get_training_config(config_path, model_name, dataset):
     with open(config_path, 'r') as conf:
@@ -35,7 +39,8 @@ def get_training_config(config_path, model_name, dataset):
         
     specific_config['model_name'] = model_name
     return specific_config
-    
+
+
 def check_writable(path, overwrite=True):
     if not os.path.exists(path):
         os.makedirs(path)
@@ -45,18 +50,22 @@ def check_writable(path, overwrite=True):
     else:
         pass
 
+
 def check_readable(path):
     if not os.path.exists(path):
         raise ValueError(f'No such file or directory! {path}')
-    
+
+
 def timetz(*args):
     tz = pytz.timezone('US/Pacific')
     return datetime.now(tz).timetuple()
+
 
 def get_logger(filename, console_log=False, log_level=logging.INFO):
     tz = pytz.timezone('US/Pacific')
     log_time = datetime.now(tz).strftime('%b%d_%H_%M_%S')
     logger = logging.getLogger(__name__)
+    logger.propagate = False # avoid duplicate logging
     logger.setLevel(log_level)
     
     # Clean logger first to avoid duplicated handlers
@@ -76,7 +85,6 @@ def get_logger(filename, console_log=False, log_level=logging.INFO):
     return logger
 
 
-# +
 def idx_split(idx, ratio, seed=0):
     '''
     randomly split idx into two portions with ratio% elements and (1 - ratio)% elements
@@ -90,6 +98,7 @@ def idx_split(idx, ratio, seed=0):
     idx1, idx2 = idx[idx1_idx], idx[idx2_idx]
     # assert((torch.cat([idx1, idx2]).sort()[0] == idx.sort()[0]).all())
     return idx1, idx2
+
 
 def graph_split(idx_train, idx_val, idx_test, rate, seed):
     '''
@@ -118,12 +127,30 @@ def graph_split(idx_train, idx_val, idx_test, rate, seed):
     return obs_idx_train, obs_idx_val, obs_idx_test, idx_obs, idx_test_ind
 
 
-# +
-def get_evaluator():
+def get_evaluator(dataset):
+    if dataset in CPF_data + NonHom_data + BGNN_data:
+        def evaluator(out, labels):
+            pred = out.argmax(1)
+            return pred.eq(labels).float().mean().item()
+
+    elif dataset in OGB_data:
+        ogb_evaluator = Evaluator(dataset)
+        def evaluator(out, labels):
+            pred = out.argmax(1, keepdim=True)
+            input_dict = {"y_true": labels.unsqueeze(1), "y_pred": pred}
+            return ogb_evaluator.eval(input_dict)['acc']
+    else:
+        raise ValueError("Unknown dataset")
+        
+    return evaluator
+
+
+def get_evaluator(dataset):
     def evaluator(out, labels):
         pred = out.argmax(1)
         return pred.eq(labels).float().mean().item()
     return evaluator
+
 
 def compute_min_cut_loss(g, out):
     out = out.to('cpu')
@@ -132,12 +159,24 @@ def compute_min_cut_loss(g, out):
     D = g.in_degrees().float().diag()
     min_cut = torch.matmul(torch.matmul(S.transpose(1, 0), A), S).trace() / torch.matmul(torch.matmul(S.transpose(1, 0), D), S).trace()
     return min_cut.item()
-# -
 
 
+def feature_prop(feats, g, k):
+    '''
+    Augment node feature by propagating the node features within k-hop neighborhood.
+    The propagation is done in the SGC fashion, i.e. hop by hop and symmetrically normalized by node degrees.
+    '''
+    assert feats.shape[0] == g.num_nodes()
+    
+    degs = g.in_degrees().float().clamp(min=1)
+    norm = torch.pow(degs, -0.5).unsqueeze(1)
 
-
-
-
-
-
+    # compute (D^-1/2 A D^-1/2)^k X
+    for _ in range(k):
+        feats = feats * norm
+        g.ndata['h'] = feats
+        g.update_all(fn.copy_u('h', 'm'), fn.sum('m', 'h'))
+        feats = g.ndata.pop('h')
+        feats = feats * norm
+        
+    return feats

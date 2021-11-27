@@ -6,7 +6,7 @@ https://github.com/BUPT-GAMMA/CPF/tree/389c01aaf238689ee7b1e5aba127842341e123b6/
 import numpy as np
 import scipy.sparse as sp
 from collections import Counter
-from sklearn.preprocessing import MultiLabelBinarizer, LabelBinarizer, normalize
+from sklearn.preprocessing import MultiLabelBinarizer, LabelBinarizer
 
 
 def is_binary_bag_of_words(features):
@@ -21,7 +21,6 @@ def to_binary_bag_of_words(features):
     return features_copy
 
 
-# +
 def normalize(mx):
     """Row-normalize sparse matrix"""
     rowsum = np.array(mx.sum(1))
@@ -31,11 +30,10 @@ def normalize(mx):
     mx = r_mat_inv.dot(mx)
     return mx
 
+
 def normalize_adj(adj):
     adj = normalize(adj + sp.eye(adj.shape[0]))
     return adj
-# -
-
 
 
 def eliminate_self_loops_adj(A):
@@ -168,7 +166,3 @@ def remove_underrepresented_classes(g, train_examples_per_class, val_examples_pe
     keep_indices = [i for i in range(len(g.labels)) if g.labels[i] in keep_classes]
 
     return create_subgraph(g, nodes_to_keep=keep_indices)
-
-
-
-
