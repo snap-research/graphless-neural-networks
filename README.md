@@ -75,9 +75,9 @@ sh experiments/sage_cpf.sh
 
 ## Results
 
-GraphSAGE vs. MLP vs. GLNN under the production setting (transductive and inductive combined). $\Delta_{MLP}$ ($\Delta_{GNN})$ represents difference between the GLNN and the MLP (GNN). Results show classification accuracy (higher is better); $\Delta_{GNN}{\geq}0$ indicates GLNN outperforms GNN. We observe that GLNNs always improve from MLPs by large margins and achieve competitive results as GNN on 6/7 datasets. Please see Table 3 in the paper for more details.  
+GraphSAGE vs. MLP vs. GLNN under the production setting (transductive and inductive combined). Delta_MLP (Delta_GNN) represents difference between the GLNN and the MLP (GNN). Results show classification accuracy (higher is better); Delta_GNN > 0 indicates GLNN outperforms GNN. We observe that GLNNs always improve from MLPs by large margins and achieve competitive results as GNN on 6/7 datasets. Please see Table 3 in the paper for more details.  
 
-| Datasets   | GNN(SAGE)      | MLP          | GLNN           | $\Delta_{MLP}$  | $\Delta_{GNN}$    |
+| Datasets   | GNN(SAGE)      | MLP          | GLNN           | Delta_MLP       | Delta_GNN         |
 |------------|----------------|--------------|----------------|-----------------|-------------------|
 | Cora       | **79.29**      | 58.98        | 78.28          | 19.30 (32.72\%) | -1.01 (-1.28\%)   |
 | Citseer    | 68.38          | 59.81        | **69.27**      | 9.46 (15.82\%)  | 0.89 (1.30\%)     |
