@@ -29,7 +29,7 @@ Code for [Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillat
 - Install DGL following https://www.dgl.ai/pages/start.html
 - Our code has been tested with
     - Python = 3.6.9
-    - PyTorch = 1.9.1
+    - PyTorch = 1.7.0
     - DGL = 0.6.1
 
 Optional
@@ -48,7 +48,7 @@ To run experiments for dataset used in the paper, please download from the follo
 
 - NonHom_data (`penn94` and `pokec`): Follow the instructions in https://github.com/CUAI/Non-Homophily-Benchmarks to download the `penn94` dataset and its splits. The `pokec` dataset will be automatically downloaded when running the `load_data` function in `dataloader.py`.
 
-- Your favourite datasets: download it add in it to the `load_data` function in `dataloader.py`.
+- Your favourite datasets: download it and add it to the `load_data` function in `dataloader.py`.
 
 
 ### Usage
@@ -60,7 +60,7 @@ python train_teacher.py --exp_setting tran --teacher GCN --dataset cora
 - To quickly train a student model with a pretrained teacher you can run `train_student.py` by specifying the experiment setting, teacher model, student model, and dataset like the example below. Make sure you train the teacher using the `train_teacher.py` first and have its result stored in the correct path specified by `--out_t_path`.
 
 ```bash
-python train_teacher.py --exp_setting ind --teacher SAGE --student MLP --dataset citeseer --out_t_path outputs
+python train_student.py --exp_setting ind --teacher SAGE --student MLP --dataset citeseer --out_t_path outputs
 ```
 - For more examples and to reproduce results in the paper, please refer to scripts in `experiments/` like below.
 
@@ -75,7 +75,7 @@ sh experiments/sage_cpf.sh
 
 ## Results
 
-GraphSAGE vs. MLP vs. GLNN under the production setting (transductive and inductive combined). $\Delta_{MLP}$ ($\Delta_{GNN})$ represents difference between the GLNN and the MLP (GNN). Results show classification accuracy (higher is better); $\Delta_{GNN}{\geq}0$ indicates \glnn{} outperforms GNN. We observe that GLNNs always improve from MLPs by large margins and achieve competitive results as GNN on 6/7 datasets. Please see Table 3 in the paper for more details.  
+GraphSAGE vs. MLP vs. GLNN under the production setting (transductive and inductive combined). $\Delta_{MLP}$ ($\Delta_{GNN})$ represents difference between the GLNN and the MLP (GNN). Results show classification accuracy (higher is better); $\Delta_{GNN}{\geq}0$ indicates GLNN outperforms GNN. We observe that GLNNs always improve from MLPs by large margins and achieve competitive results as GNN on 6/7 datasets. Please see Table 3 in the paper for more details.  
 
 | Datasets   | GNN(SAGE)      | MLP          | GLNN           | $\Delta_{MLP}$  | $\Delta_{GNN}$    |
 |------------|----------------|--------------|----------------|-----------------|-------------------|

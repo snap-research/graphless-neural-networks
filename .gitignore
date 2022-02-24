@@ -1,0 +1,9 @@
+**/data
+**/outputs
+**/*.npz
+**/*.ipynb
+**/__pycache__
+**/*.ipynb_checkpoints
+**/log
+**/plots
+**/temp

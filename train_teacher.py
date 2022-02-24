@@ -62,17 +62,7 @@ def get_args():
     parser.add_argument('--feature_aug_k', type=int, default=0,
                         help='Augment node futures by aggregating feature_aug_k-hop neighbor features')
 
-    args = parser.parse_args()
-
-    assert(1 <= args.num_exp)
-    assert(0 <= args.feature_noise <= 1)
-    
-    if args.feature_noise != 0:
-        args.output_path = Path.cwd().joinpath(args.output_path, 'noisy_features', f'noise_{args.feature_noise}')
-    if args.feature_aug_k > 0:
-        args.output_path = Path.cwd().joinpath(args.output_path, 'aug_features', f'aug_hop_{args.feature_aug_k}')
-        args.teacher = f'GA{args.feature_aug_k}{args.teacher}'
-            
+    args = parser.parse_args()            
     return args
 
 
@@ -87,6 +77,14 @@ def run(args):
     ''' Set seed, device, and logger '''
     set_seed(args.seed)
     device = torch.device('cuda:'+ str(args.device) if torch.cuda.is_available() else 'cpu')
+    
+    if args.feature_noise != 0:
+        args.output_path = Path.cwd().joinpath(args.output_path, 'noisy_features', f'noise_{args.feature_noise}')
+    
+    if args.feature_aug_k > 0:
+        args.output_path = Path.cwd().joinpath(args.output_path, 'aug_features', f'aug_hop_{args.feature_aug_k}')
+        args.teacher = f'GA{args.feature_aug_k}{args.teacher}'
+
     if args.exp_setting == 'tran':
         output_dir = Path.cwd().joinpath(args.output_path, 'transductive', args.dataset, args.teacher, f'seed_{args.seed}')
     elif args.exp_setting == 'ind':
