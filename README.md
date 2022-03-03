@@ -24,58 +24,62 @@ Code for [Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillat
 
 ## Getting Started
 
-### Requirements
-- Install PyTorch following https://pytorch.org/
-- Install DGL following https://www.dgl.ai/pages/start.html
-- Our code has been tested with
-    - Python = 3.6.9
-    - PyTorch = 1.7.0
-    - DGL = 0.6.1
+### Setup Environment
 
-Optional
-- OGB version >= 1.2.6 for the OGB datasets
-- Additional requirements in requirements.txt
+We use conda for environment setup. You can use
 
+`bash ./prepare_env.sh`
 
-### Dataset
-To run experiments for dataset used in the paper, please download from the following links and put them under `data/` (some of them need to be renamed, see below).
+which will create a conda environment named `glnn` and install relevant requirements (from `requirements.txt`).  
 
-- CPF_data (`cora`, `citeseer`, `pubmed`, `a-computer`, and `a-photo`): Download the '.npz' files from https://github.com/BUPT-GAMMA/CPF/tree/master/data/npz. Rename `amazon_electronics_computers.npz` and `amazon_electronics_photo.npz` to `a-computer.npz` and `a-photo.npz` respectively.
+Be sure to activate the environment with
 
-- OGB_data (`ogbn-arxiv` and `ogbn-products`): Datasets will be automatically downloaded when running the `load_data` function in `dataloader.py`. More details: https://ogb.stanford.edu/.
+`conda activate glnn`
 
-- BGNN_data (`house_class` and `vk_class`): Follow the instructions in https://github.com/dmlc/dgl/tree/473d5e0a4c4e4735f1c9dc9d783e0374328cca9a/examples/pytorch/bgnn and download dataset pre-processed in DGL format from https://www.dropbox.com/s/verx1evkykzli88/datasets.zip.
+before running experiments as described below.
 
-- NonHom_data (`penn94` and `pokec`): Follow the instructions in https://github.com/CUAI/Non-Homophily-Benchmarks to download the `penn94` dataset and its splits. The `pokec` dataset will be automatically downloaded when running the `load_data` function in `dataloader.py`.
+### Preparing datasets
+To run experiments for dataset used in the paper, please download from the following links and put them under `data/` (see below for instructions on organizing the datasets).
 
-- Your favourite datasets: download it and add it to the `load_data` function in `dataloader.py`.
+- *CPF data* (`cora`, `citeseer`, `pubmed`, `a-computer`, and `a-photo`): Download the '.npz' files from https://github.com/BUPT-GAMMA/CPF/tree/master/data/npz. Rename `amazon_electronics_computers.npz` and `amazon_electronics_photo.npz` to `a-computer.npz` and `a-photo.npz` respectively.
+
+- *OGB data* (`ogbn-arxiv` and `ogbn-products`): Datasets will be automatically downloaded when running the `load_data` function in `dataloader.py`. More details: https://ogb.stanford.edu/.
+
+- *BGNN data* (`house_class` and `vk_class`): Follow the instructions in https://github.com/dmlc/dgl/tree/473d5e0a4c4e4735f1c9dc9d783e0374328cca9a/examples/pytorch/bgnn and download dataset pre-processed in DGL format from https://www.dropbox.com/s/verx1evkykzli88/datasets.zip.
+
+- *NonHom data* (`penn94` and `pokec`): Follow the instructions in https://github.com/CUAI/Non-Homophily-Benchmarks to download the `penn94` dataset and its splits. The `pokec` dataset will be automatically downloaded when running the `load_data` function in `dataloader.py`.
+
+- Your favourite datasets: download and add to the `load_data` function in `dataloader.py`.
 
 
 ### Usage
-- To quickly train a teacher model you can run `train_teacher.py` by specifying the experiment setting, i.e. transductive (`tran`) or. inductive (`ind`), teacher model, e.g. `GCN`, and dataset, e.g. `cora`, like the example below.
 
-```bash
+To quickly train a teacher model you can run `train_teacher.py` by specifying the experiment setting, i.e. transductive (`tran`) or. inductive (`ind`), teacher model, e.g. `GCN`, and dataset, e.g. `cora`, as per the example below.
+
+```
 python train_teacher.py --exp_setting tran --teacher GCN --dataset cora
 ```
-- To quickly train a student model with a pretrained teacher you can run `train_student.py` by specifying the experiment setting, teacher model, student model, and dataset like the example below. Make sure you train the teacher using the `train_teacher.py` first and have its result stored in the correct path specified by `--out_t_path`.
 
-```bash
+To quickly train a student model with a pretrained teacher you can run `train_student.py` by specifying the experiment setting, teacher model, student model, and dataset like the example below. Make sure you train the teacher using the `train_teacher.py` first and have its result stored in the correct path specified by `--out_t_path`.
+
+```
 python train_student.py --exp_setting ind --teacher SAGE --student MLP --dataset citeseer --out_t_path outputs
 ```
-- For more examples and to reproduce results in the paper, please refer to scripts in `experiments/` like below.
 
-```bash
-sh experiments/sage_cpf.sh
+For more examples, and to reproduce results in the paper, please refer to scripts in `experiments/` as below.
+
+```
+bash experiments/sage_cpf.sh
 ```
 
-- To extend GLNN to your own model, you may do one of the following.
-    - Add your favourite model architectures to the `Model` class in `model.py`. Then follow the examples above.
-    - Train teacher model and store its output (log probabilities). Then train the student by `train_student.py` with the correct `--out_t_path`.
+To extend GLNN to your own model, you may do one of the following.
+- Add your favourite model architectures to the `Model` class in `model.py`. Then follow the examples above.
+- Train teacher model and store its output (log-probabilities). Then train the student by `train_student.py` with the correct `--out_t_path`.
 
 
 ## Results
 
-GraphSAGE vs. MLP vs. GLNN under the production setting (transductive and inductive combined). Delta_MLP (Delta_GNN) represents difference between the GLNN and the MLP (GNN). Results show classification accuracy (higher is better); Delta_GNN > 0 indicates GLNN outperforms GNN. We observe that GLNNs always improve from MLPs by large margins and achieve competitive results as GNN on 6/7 datasets. Please see Table 3 in the paper for more details.  
+GraphSAGE vs. MLP vs. GLNN under the production setting described in the paper (transductive and inductive combined). Delta_MLP (Delta_GNN) represents difference between the GLNN and the MLP (GNN). Results show classification accuracy (higher is better); Delta_GNN > 0 indicates GLNN outperforms GNN. We observe that GLNNs always improve from MLPs by large margins and achieve competitive results as GNN on 6/7 datasets. Please see Table 3 in the paper for more details.  
 
 | Datasets   | GNN(SAGE)      | MLP          | GLNN           | Delta_MLP       | Delta_GNN         |
 |------------|----------------|--------------|----------------|-----------------|-------------------|
@@ -113,22 +117,22 @@ GraphSAGE vs. MLP vs. GLNN under the production setting (transductive and induct
 |            | tran | 76.53 ±0.55    | 63.73 ± 0.69 | 75.92 ± 0.61   | 12.20 (19.15\%) | -0.61 (-0.79\%)   |
  -->
 
-## Cite
+## Citation
 
-Please cite our paper if you use this code in your own work:
+If you find our work useful, please cite the following:
 
 ```
-@misc{zhang2021graphless,
+@inproceedings{zhang2021graphless,
       title={Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillation}, 
       author={Shichang Zhang and Yozen Liu and Yizhou Sun and Neil Shah},
-      year={2021},
-      eprint={2110.08727},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
+      booktitle={International Conference on Learning Representations}
+      year={2022},
+      url={https://arxiv.org/abs/2110.08727}
 }
 ```
 
 ## Contact Us
 
-Please open an issue or contact shichang@cs.ucla.edu if you have any questions.
+Please open an issue or contact `shichang@cs.ucla.edu` if you have any questions.
+
 <!-- #endregion -->

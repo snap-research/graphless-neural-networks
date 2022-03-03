@@ -1,7 +1,7 @@
-'''
+"""
 Adapted from the CPF implementation
 https://github.com/BUPT-GAMMA/CPF/tree/389c01aaf238689ee7b1e5aba127842341e123b6/data
-'''
+"""
 
 import numpy as np
 import scipy.sparse as sp
@@ -11,7 +11,12 @@ from sklearn.preprocessing import MultiLabelBinarizer, LabelBinarizer
 
 def is_binary_bag_of_words(features):
     features_coo = features.tocoo()
-    return all(single_entry == 1.0 for _, _, single_entry in zip(features_coo.row, features_coo.col, features_coo.data))
+    return all(
+        single_entry == 1.0
+        for _, _, single_entry in zip(
+            features_coo.row, features_coo.col, features_coo.data
+        )
+    )
 
 
 def to_binary_bag_of_words(features):
@@ -25,7 +30,7 @@ def normalize(mx):
     """Row-normalize sparse matrix"""
     rowsum = np.array(mx.sum(1))
     r_inv = np.power(rowsum, -1).flatten()
-    r_inv[np.isinf(r_inv)] = 0.
+    r_inv[np.isinf(r_inv)] = 0.0
     r_mat_inv = sp.diags(r_inv)
     mx = r_mat_inv.dot(mx)
     return mx
@@ -63,14 +68,20 @@ def largest_connected_components(sparse_graph, n_components=1):
     """
     _, component_indices = sp.csgraph.connected_components(sparse_graph.adj_matrix)
     component_sizes = np.bincount(component_indices)
-    components_to_keep = np.argsort(component_sizes)[::-1][:n_components]  # reverse order to sort descending
+    components_to_keep = np.argsort(component_sizes)[::-1][
+        :n_components
+    ]  # reverse order to sort descending
     nodes_to_keep = [
-        idx for (idx, component) in enumerate(component_indices) if component in components_to_keep
+        idx
+        for (idx, component) in enumerate(component_indices)
+        if component in components_to_keep
     ]
     return create_subgraph(sparse_graph, nodes_to_keep=nodes_to_keep)
 
 
-def create_subgraph(sparse_graph, _sentinel=None, nodes_to_remove=None, nodes_to_keep=None):
+def create_subgraph(
+    sparse_graph, _sentinel=None, nodes_to_remove=None, nodes_to_keep=None
+):
     """Create a graph with the specified subset of nodes.
 
     Exactly one of (nodes_to_remove, nodes_to_keep) should be provided, while the other stays None.
@@ -95,14 +106,20 @@ def create_subgraph(sparse_graph, _sentinel=None, nodes_to_remove=None, nodes_to
     """
     # Check that arguments are passed correctly
     if _sentinel is not None:
-        raise ValueError("Only call `create_subgraph` with named arguments',"
-                         " (nodes_to_remove=...) or (nodes_to_keep=...)")
+        raise ValueError(
+            "Only call `create_subgraph` with named arguments',"
+            " (nodes_to_remove=...) or (nodes_to_keep=...)"
+        )
     if nodes_to_remove is None and nodes_to_keep is None:
         raise ValueError("Either nodes_to_remove or nodes_to_keep must be provided.")
     elif nodes_to_remove is not None and nodes_to_keep is not None:
-        raise ValueError("Only one of nodes_to_remove or nodes_to_keep must be provided.")
+        raise ValueError(
+            "Only one of nodes_to_remove or nodes_to_keep must be provided."
+        )
     elif nodes_to_remove is not None:
-        nodes_to_keep = [i for i in range(sparse_graph.num_nodes()) if i not in nodes_to_remove]
+        nodes_to_keep = [
+            i for i in range(sparse_graph.num_nodes()) if i not in nodes_to_remove
+        ]
     elif nodes_to_keep is not None:
         nodes_to_keep = sorted(nodes_to_keep)
     else:
@@ -146,7 +163,7 @@ def binarize_labels(labels, sparse_output=False, return_classes=False):
         Classes that correspond to each column of the label_matrix.
 
     """
-    if hasattr(labels[0], '__iter__'):  # labels[0] is iterable <=> multilabel format
+    if hasattr(labels[0], "__iter__"):  # labels[0] is iterable <=> multilabel format
         binarizer = MultiLabelBinarizer(sparse_output=sparse_output)
     else:
         binarizer = LabelBinarizer(sparse_output=sparse_output)
@@ -154,7 +171,9 @@ def binarize_labels(labels, sparse_output=False, return_classes=False):
     return (label_matrix, binarizer.classes_) if return_classes else label_matrix
 
 
-def remove_underrepresented_classes(g, train_examples_per_class, val_examples_per_class):
+def remove_underrepresented_classes(
+    g, train_examples_per_class, val_examples_per_class
+):
     """Remove nodes from graph that correspond to a class of which there are less than
     num_classes * train_examples_per_class + num_classes * val_examples_per_class nodes.
 
@@ -162,7 +181,11 @@ def remove_underrepresented_classes(g, train_examples_per_class, val_examples_pe
     """
     min_examples_per_class = train_examples_per_class + val_examples_per_class
     examples_counter = Counter(g.labels)
-    keep_classes = set(class_ for class_, count in examples_counter.items() if count > min_examples_per_class)
+    keep_classes = set(
+        class_
+        for class_, count in examples_counter.items()
+        if count > min_examples_per_class
+    )
     keep_indices = [i for i in range(len(g.labels)) if g.labels[i] in keep_classes]
 
     return create_subgraph(g, nodes_to_keep=keep_indices)
