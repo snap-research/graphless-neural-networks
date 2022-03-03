@@ -26,11 +26,11 @@ Code for [Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillat
 
 ### Setup Environment
 
-We use conda for environment setup.  For simplicity, we use CPU-based `torch` and `dgl` versions in this guide.  You can use
+We use conda for environment setup. You can use
 
 `bash ./prepare_env.sh`
 
-which will create a conda environment named `glnn` and install relevant requirements (from `requirements.txt`).
+which will create a conda environment named `glnn` and install relevant requirements (from `requirements.txt`).   For simplicity, we use CPU-based `torch` and `dgl` versions in this guide, as specified in requirements.  To run experiments with CUDA, please install `torch` and `dgl` with proper CUDA support, and remove them from `requirements.txt`.  See https://pytorch.org/ and https://www.dgl.ai/pages/start.html for more details. 
 
 Be sure to activate the environment with
 
@@ -38,7 +38,6 @@ Be sure to activate the environment with
 
 before running experiments as described below.
 
-(Note: To run experiments with CUDA, please install `torch` and `dgl` with proper CUDA support, and drop these from requirements.txt. See https://pytorch.org/ and https://www.dgl.ai/pages/start.html for more details.)
 
 
 ### Preparing datasets
