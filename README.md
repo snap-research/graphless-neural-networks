@@ -26,7 +26,7 @@ Code for [Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillat
 
 ### Setup Environment
 
-We use conda for environment setup. You can use
+We use conda for environment setup.  For simplicity, we use CPU-based `torch` and `dgl` versions in this guide.  You can use
 
 `bash ./prepare_env.sh`
 
