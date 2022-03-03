@@ -38,7 +38,7 @@ Be sure to activate the environment with
 
 before running experiments as described below.
 
-(Note: To run experiments with CUDA, please install `torch` and `dgl` with proper CUDA versions. See https://pytorch.org/ and https://www.dgl.ai/pages/start.html for more details.)
+(Note: To run experiments with CUDA, please install `torch` and `dgl` with proper CUDA support, and drop these from requirements.txt. See https://pytorch.org/ and https://www.dgl.ai/pages/start.html for more details.)
 
 
 ### Preparing datasets
