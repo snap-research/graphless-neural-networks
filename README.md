@@ -1,5 +1,5 @@
 <!-- #region -->
-# Graph-less Neural Network (GLNN)
+# Graph-less Neural Networks (GLNN)
 
 Code for [Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillation](https://arxiv.org/pdf/2110.08727.pdf) by [Shichang Zhang](https://shichangzh.github.io/), [Yozen Liu](https://research.snap.com/team/yozen-liu/), [Yizhou Sun](http://web.cs.ucla.edu/~yzsun/), and [Neil Shah](http://nshah.net/).
 
