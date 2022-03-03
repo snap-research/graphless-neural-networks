@@ -30,13 +30,16 @@ We use conda for environment setup. You can use
 
 `bash ./prepare_env.sh`
 
-which will create a conda environment named `glnn` and install relevant requirements (from `requirements.txt`).  
+which will create a conda environment named `glnn` and install relevant requirements (from `requirements.txt`).
 
 Be sure to activate the environment with
 
 `conda activate glnn`
 
 before running experiments as described below.
+
+(Note: To run experiments with CUDA, please install `torch` and `dgl` with proper CUDA versions. See https://pytorch.org/ and https://www.dgl.ai/pages/start.html for more details.)
+
 
 ### Preparing datasets
 To run experiments for dataset used in the paper, please download from the following links and put them under `data/` (see below for instructions on organizing the datasets).
@@ -54,7 +57,7 @@ To run experiments for dataset used in the paper, please download from the follo
 
 ### Usage
 
-To quickly train a teacher model you can run `train_teacher.py` by specifying the experiment setting, i.e. transductive (`tran`) or. inductive (`ind`), teacher model, e.g. `GCN`, and dataset, e.g. `cora`, as per the example below.
+To quickly train a teacher model you can run `train_teacher.py` by specifying the experiment setting, i.e. transductive (`tran`) or inductive (`ind`), teacher model, e.g. `GCN`, and dataset, e.g. `cora`, as per the example below.
 
 ```
 python train_teacher.py --exp_setting tran --teacher GCN --dataset cora

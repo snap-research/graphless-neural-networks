@@ -21,7 +21,7 @@ from train_and_eval import distill_run_transductive, distill_run_inductive
 
 def get_args():
     parser = argparse.ArgumentParser(description="PyTorch DGL implementation")
-    parser.add_argument("--device", type=int, default=0, help="CUDA device")
+    parser.add_argument("--device", type=int, default=0, help="CUDA device, -1 means CPU")
     parser.add_argument("--seed", type=int, default=0, help="Random seed")
     parser.add_argument(
         "--log_level",
@@ -175,9 +175,10 @@ def run(args):
 
     """ Set seed, device, and logger """
     set_seed(args.seed)
-    device = torch.device(
-        "cuda:" + str(args.device) if torch.cuda.is_available() else "cpu"
-    )
+    if torch.cuda.is_available() and args.device >= 0:
+        device = torch.device("cuda:" + str(args.device))
+    else:
+        device = "cpu"
 
     if args.feature_noise != 0:
         args.output_path = Path.cwd().joinpath(
