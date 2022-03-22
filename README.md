@@ -123,7 +123,7 @@ GraphSAGE vs. MLP vs. GLNN under the production setting described in the paper (
 
 If you find our work useful, please cite the following:
 
-```
+```BibTeX
 @inproceedings{zhang2021graphless,
       title={Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillation}, 
       author={Shichang Zhang and Yozen Liu and Yizhou Sun and Neil Shah},
