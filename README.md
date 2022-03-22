@@ -1,5 +1,5 @@
 <!-- #region -->
-# Graph-less Neural Network (GLNN)
+# Graph-less Neural Networks (GLNN)
 
 Code for [Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillation](https://arxiv.org/pdf/2110.08727.pdf) by [Shichang Zhang](https://shichangzh.github.io/), [Yozen Liu](https://research.snap.com/team/yozen-liu/), [Yizhou Sun](http://web.cs.ucla.edu/~yzsun/), and [Neil Shah](http://nshah.net/).
 
@@ -30,7 +30,7 @@ We use conda for environment setup. You can use
 
 `bash ./prepare_env.sh`
 
-which will create a conda environment named `glnn` and install relevant requirements (from `requirements.txt`).
+which will create a conda environment named `glnn` and install relevant requirements (from `requirements.txt`).   For simplicity, we use CPU-based `torch` and `dgl` versions in this guide, as specified in requirements.  To run experiments with CUDA, please install `torch` and `dgl` with proper CUDA support, and remove them from `requirements.txt`.  See https://pytorch.org/ and https://www.dgl.ai/pages/start.html for more details. 
 
 Be sure to activate the environment with
 
