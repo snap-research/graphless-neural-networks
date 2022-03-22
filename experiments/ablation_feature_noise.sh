@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Train SAGE with 10 different node feature noise levels: 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
 # on five datasets: "cora" "citeseer" "pubmed" "a-computer" "a-photo"
 # Then train corresponding GLNN for each level

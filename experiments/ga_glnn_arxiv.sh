@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Train 1-hop GA-MLP and 1-hop GA-GLNN with SAGE teacher on "ogbn-arxiv" under the inductive setting
 
 python train_teacher.py --exp_setting "ind" --teacher "MLP3w4" --dataset "ogbn-arxiv" \

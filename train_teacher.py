@@ -20,7 +20,7 @@ from train_and_eval import run_transductive, run_inductive
 
 def get_args():
     parser = argparse.ArgumentParser(description="PyTorch DGL implementation")
-    parser.add_argument("--device", type=int, default=0, help="CUDA device, -1 means CPU")
+    parser.add_argument("--device", type=int, default=-1, help="CUDA device, -1 means CPU")
     parser.add_argument("--seed", type=int, default=0, help="Random seed")
     parser.add_argument(
         "--log_level",

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Train SAGE teacher on five datasets: "cora" "citeseer" "pubmed" "a-computer" "a-photo"
 
 aggregated_result_file="sage_cpf.txt"

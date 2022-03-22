@@ -1,3 +1,6 @@
+#!/bin/bash
+
+
 # Train five different teachers "GCN" "GAT" "SAGE" "MLP" "APPNP"
 # on five datasets: "cora" "citeseer" "pubmed" "a-computer" "a-photo"
 # Then train corresponding GLNN for each teacher

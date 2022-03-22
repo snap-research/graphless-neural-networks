@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Train SAGE teacher on "ogbn-products"
 
 for e in "tran" "ind"

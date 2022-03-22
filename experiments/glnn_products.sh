@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Train GLNN with SAGE teacher on "ogbn-products"
 
 for e in "tran" "ind"
