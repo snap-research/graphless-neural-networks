@@ -245,6 +245,27 @@ class NCDataset(object):
         self.graph = {}
         self.label = None
 
+    def rand_train_test_idx(label, train_prop, valid_prop, ignore_negative):
+        """
+        Randomly splits the dataset into train, validation, and test sets.
+        """
+
+        if ignore_negative:
+            label = label[label >= 0]
+
+        num_nodes = len(label)
+        num_train = int(train_prop * num_nodes)
+        num_valid = int(valid_prop * num_nodes)
+        num_test = num_nodes - num_train - num_valid
+
+        idx = np.random.permutation(num_nodes)
+
+        train_idx = idx[:num_train]
+        valid_idx = idx[num_train : num_train + num_valid]
+        test_idx = idx[num_train + num_valid :]
+
+        return train_idx, valid_idx, test_idx
+
     def get_idx_split(self, split_type="random", train_prop=0.5, valid_prop=0.25):
         """
         train_prop: The proportion of dataset for train split. Between 0 and 1.
@@ -253,7 +274,7 @@ class NCDataset(object):
 
         if split_type == "random":
             ignore_negative = False if self.name == "ogbn-proteins" else True
-            train_idx, valid_idx, test_idx = rand_train_test_idx(
+            train_idx, valid_idx, test_idx = self.rand_train_test_idx(
                 self.label,
                 train_prop=train_prop,
                 valid_prop=valid_prop,
