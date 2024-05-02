@@ -249,20 +249,21 @@ class NCDataset(object):
         """
         Randomly splits the dataset into train, validation, and test sets.
         """
-
         if ignore_negative:
-            label = label[label >= 0]
+            valid_idx = np.where(label >= 0)[0]
+        else:
+            valid_idx = np.arange(len(label))
 
-        num_nodes = len(label)
+        num_nodes = len(valid_idx)
         num_train = int(train_prop * num_nodes)
         num_valid = int(valid_prop * num_nodes)
         num_test = num_nodes - num_train - num_valid
 
-        idx = np.random.permutation(num_nodes)
+        idx = np.random.permutation(valid_idx)
 
         train_idx = idx[:num_train]
-        valid_idx = idx[num_train : num_train + num_valid]
-        test_idx = idx[num_train + num_valid :]
+        valid_idx = idx[num_train: num_train + num_valid]
+        test_idx = idx[num_train + num_valid:]
 
         return train_idx, valid_idx, test_idx
 

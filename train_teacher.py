@@ -149,7 +149,7 @@ def get_args():
     return args
 
 
-def run(args, num_exp):
+def run(args):
     """
     Returns:
     score_lst: a list of evaluation results on test set.
@@ -164,12 +164,12 @@ def run(args, num_exp):
     else:
         device = "cpu"
 
-    if args.feature_noise != 0 and num_exp == 1:
+    if args.feature_noise != 0 and args.seed == 0:
         args.output_path = Path.cwd().joinpath(
             args.output_path, "noisy_features", f"noise_{args.feature_noise}"
         )
 
-    if args.feature_aug_k > 0 and num_exp == 1:
+    if args.feature_aug_k > 0 and args.seed == 0:
         args.output_path = Path.cwd().joinpath(
             args.output_path, "aug_features", f"aug_hop_{args.feature_aug_k}"
         )
@@ -318,7 +318,7 @@ def repeat_run(args):
     scores = []
     for seed in range(args.num_exp):
         args.seed = seed
-        scores.append(run(args, seed+1))
+        scores.append(run(args))
     scores_np = np.array(scores)
     return scores_np.mean(axis=0), scores_np.std(axis=0)
 
@@ -326,7 +326,7 @@ def repeat_run(args):
 def main():
     args = get_args()
     if args.num_exp == 1:
-        score = run(args, 1)
+        score = run(args)
         score_str = "".join([f"{s : .4f}\t" for s in score])
 
     elif args.num_exp > 1:
