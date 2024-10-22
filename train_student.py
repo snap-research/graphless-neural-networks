@@ -180,14 +180,14 @@ def run(args):
     else:
         device = "cpu"
 
-    if args.feature_noise != 0:
+    if args.feature_noise != 0 and args.seed == 0:
         args.output_path = Path.cwd().joinpath(
             args.output_path, "noisy_features", f"noise_{args.feature_noise}"
         )
         # Teacher is assumed to be trained on the same noisy features as well.
         args.out_t_path = args.output_path
 
-    if args.feature_aug_k > 0:
+    if args.feature_aug_k > 0 and args.seed == 0:
         args.output_path = Path.cwd().joinpath(
             args.output_path, "aug_features", f"aug_hop_{args.feature_aug_k}"
         )
